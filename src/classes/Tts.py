@@ -15,16 +15,31 @@ class TTS:
         Returns:
             None
         """
-        venv_site_packages = "venv\\Lib\\site-packages"
+#        venv_site_packages = "venv\\Lib\\site-packages"
+
+        # Path to the .models.json file
+#        models_json_path = os.path.join(
+#            ROOT_DIR,
+#            venv_site_packages,
+#            "TTS",
+#            ".models.json",
+#        )
+
+        # Determine the site-packages directory dynamically
+        site_packages = next((p for p in sys.path if 'site-packages' in p), None)
+
+        if not site_packages:
+            raise EnvironmentError("Could not find site-packages directory. Ensure that the TTS package is installed.")
 
         # Path to the .models.json file
         models_json_path = os.path.join(
-            ROOT_DIR,
-            venv_site_packages,
+            site_packages,
             "TTS",
             ".models.json",
         )
 
+
+        
         # Initialize the ModelManager
         self._model_manager = ModelManager(models_json_path)
 
