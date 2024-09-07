@@ -126,7 +126,7 @@ def get_image_prompt_llm() -> str:
 
 def get_zip_url() -> str:
     """
-    Gets the URL to the zip file containing the songs.
+    Gets the URL to the zip file containing the music.
 
     Returns:
         url (str): The URL to the zip file
