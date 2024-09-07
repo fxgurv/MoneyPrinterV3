@@ -11,7 +11,8 @@ def get_cache_path() -> str:
     Returns:
         path (str): The path to the cache folder
     """
-    return os.path.join(ROOT_DIR, '.mp')
+#    return os.path.join(ROOT_DIR, '.mp')
+    return os.path.join(ROOT_DIR, 'tmp')
 
 def get_afm_cache_path() -> str:
     """
