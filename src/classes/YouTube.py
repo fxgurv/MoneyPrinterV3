@@ -4,7 +4,6 @@ import json
 import time
 import requests
 import assemblyai as aai
-
 from utils import *
 from cache import *
 from .Tts import TTS
@@ -214,14 +213,14 @@ class YouTube:
         Returns:
             metadata (dict): The generated metadata.
         """
-        title = self.generate_response(f"Please generate a YouTube Video Title for the following subject, including hashtags: {self.subject}. Only return the title, nothing else. Limit the title under 100 characters.")
+        title = self.generate_response(f"Please generate a YouTube Video Title for the following subject, including hashtags: {self.subject}. Only return the title in {self.language} language, nothing else. Limit the title under 100 characters.")
 
         if len(title) > 100:
             if get_verbose():
                 warning("Generated Title is too long. Retrying...")
             return self.generate_metadata()
 
-        description = self.generate_response(f"Please generate a YouTube Video Description for the following script: {self.script}. Only return the description, nothing else.")
+        description = self.generate_response(f"Please generate a YouTube Video Description for the following script: {self.script}. Only return the description in {self.language} language, nothing else.")
         
         self.metadata = {
             "title": title,
