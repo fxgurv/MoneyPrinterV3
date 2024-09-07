@@ -42,15 +42,17 @@ def build_url(youtube_video_id: str) -> str:
 
 def rem_temp_files() -> None:
     """
-    Removes temporary files in the `.mp` directory.
+    Removes temporary files in the `tmp` directory.
 
     Returns:
         None
     """
     # Path to the `.mp` directory
-    mp_dir = os.path.join(ROOT_DIR, ".mp")
+    tmp_dir = os.path.join(ROOT_DIR, "tmp")
+    files = os.listdir(tmp_dir)    
+#    mp_dir = os.path.join(ROOT_DIR, ".mp")
 
-    files = os.listdir(mp_dir)
+#    files = os.listdir(mp_dir)
 
     for file in files:
         if not file.endswith(".json"):
