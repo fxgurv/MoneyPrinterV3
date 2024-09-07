@@ -330,7 +330,9 @@ class YouTube:
                 if get_verbose():
                     info(f" => Generated Image: {image_url}")
 
-                image_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".png")
+                image_path = os.path.join(ROOT_DIR, "tmp", str(uuid4()) + ".png")
+#                image_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".png")
+
                 
                 with open(image_path, "wb") as image_file:
                     # Write bytes to file
@@ -355,7 +357,8 @@ class YouTube:
         Returns:
             path_to_wav (str): Path to generated audio (WAV Format).
         """
-        path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".wav")
+#        path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".wav")
+        path = os.path.join(ROOT_DIR, "tmp", str(uuid4()) + ".wav")
 
         # Clean script, remove every character that is not a word character, a space, a period, a question mark, or an exclamation mark.
         self.script = re.sub(r'[^\w\s.?!]', '', self.script)
@@ -414,7 +417,8 @@ class YouTube:
         transcript = transcriber.transcribe(audio_path)
         subtitles = transcript.export_subtitles_srt()
 
-        srt_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".srt")
+#        srt_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".srt")
+        srt_path = os.path.join(ROOT_DIR, "tmp", str(uuid4()) + ".srt")
 
         with open(srt_path, "w") as file:
             file.write(subtitles)
@@ -428,7 +432,9 @@ class YouTube:
         Returns:
             path (str): The path to the generated MP4 File.
         """
-        combined_image_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".mp4")
+#        combined_image_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".mp4")
+        combined_image_path = os.path.join(ROOT_DIR, "tmp", str(uuid4()) + ".mp4")
+
         threads = get_threads()
         tts_clip = AudioFileClip(self.tts_path)
         max_duration = tts_clip.duration
