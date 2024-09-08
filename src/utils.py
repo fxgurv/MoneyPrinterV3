@@ -51,62 +51,60 @@ def rem_temp_files() -> None:
     tmp_dir = os.path.join(ROOT_DIR, "tmp")
     files = os.listdir(tmp_dir)    
 #    mp_dir = os.path.join(ROOT_DIR, ".mp")
-
 #    files = os.listdir(mp_dir)
-
     for file in files:
         if not file.endswith(".json"):
-            os.remove(os.path.join(mp_dir, file))
+            os.remove(os.path.join(tmp_dir, file))
 
-def fetch_songs() -> None:
+def fetch_music() -> None:
     """
-    Downloads songs into songs/ directory to use with geneated videos.
+    Downloads music into music/ directory to use with geneated videos.
 
     Returns:
         None
     """
     try:
-        info(f" => Fetching songs...")
+        info(f" => Fetching music...")
 
-        files_dir = os.path.join(ROOT_DIR, "Songs")
+        files_dir = os.path.join(ROOT_DIR, "music")
         if not os.path.exists(files_dir):
             os.mkdir(files_dir)
             if get_verbose():
                 info(f" => Created directory: {files_dir}")
         else:
-            # Skip if songs are already downloaded
+            # Skip if music are already downloaded
             return
 
-        # Download songs
+        # Download music
         response = requests.get(get_zip_url() or "https://filebin.net/bb9ewdtckolsf3sg/drive-download-20240209T180019Z-001.zip")
 
         # Save the zip file
-        with open(os.path.join(files_dir, "songs.zip"), "wb") as file:
+        with open(os.path.join(files_dir, "music.zip"), "wb") as file:
             file.write(response.content)
 
         # Unzip the file
-        with zipfile.ZipFile(os.path.join(files_dir, "songs.zip"), "r") as file:
+        with zipfile.ZipFile(os.path.join(files_dir, "music.zip"), "r") as file:
             file.extractall(files_dir)
 
         # Remove the zip file
-        os.remove(os.path.join(files_dir, "songs.zip"))
+        os.remove(os.path.join(files_dir, "music.zip"))
 
-        success(" => Downloaded Songs to ../Songs.")
+        success(" => Downloaded music to ../music.")
 
     except Exception as e:
-        error(f"Error occurred while fetching songs: {str(e)}")
+        error(f"Error occurred while fetching music: {str(e)}")
 
 def choose_random_song() -> str:
     """
-    Chooses a random song from the songs/ directory.
+    Chooses a random music from the music/ directory.
 
     Returns:
-        str: The path to the chosen song.
+        str: The path to the chosen music.
     """
     try:
-        songs = os.listdir(os.path.join(ROOT_DIR, "Songs"))
-        song = random.choice(songs)
-        success(f" => Chose song: {song}")
-        return os.path.join(ROOT_DIR, "Songs", song)
+        music = os.listdir(os.path.join(ROOT_DIR, "music"))
+        music = random.choice(music)
+        success(f" => Chose music: {music}")
+        return os.path.join(ROOT_DIR, "music", music)
     except Exception as e:
-        error(f"Error occurred while choosing random song: {str(e)}")
+        error(f"Error occurred while choosing random music: {str(e)}")
