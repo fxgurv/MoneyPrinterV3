@@ -2,7 +2,6 @@ import os
 import sys
 import json
 import srt_equalizer
-
 from termcolor import colored
 
 ROOT_DIR = os.path.dirname(sys.path[0])
