@@ -3,13 +3,13 @@ import g4f
 import json
 import time
 import requests
-import assemblyai as aai
 from utils import *
 from cache import *
 from .Tts import TTS
 from config import *
 from status import *
 from uuid import uuid4
+import assemblyai as aai
 from constants import *
 from typing import List
 from moviepy.editor import *
@@ -150,7 +150,7 @@ class YouTube:
         Returns:
             topic (str): The generated topic.
         """
-        completion = self.generate_response(f"Please generate a specific video idea that takes about the following topic: {self.niche}. Make it exactly one sentence. Only return the topic, nothing else.")
+        completion = self.generate_response(f"Please generate a specific video idea that takes about the following topic: {self.niche}. Make it exactly one sentence in {self.language}. Only return the topic, nothing else.")
 
         if not completion:
             error("Failed to generate Topic.")
@@ -182,7 +182,7 @@ class YouTube:
         
         YOU MUST NOT EXCEED THE 4 SENTENCES LIMIT. MAKE SURE THE 4 SENTENCES ARE SHORT.
         YOU MUST NOT INCLUDE ANY TYPE OF MARKDOWN OR FORMATTING IN THE SCRIPT, NEVER USE A TITLE.
-        YOU MUST WRITE THE SCRIPT IN THE LANGUAGE SPECIFIED IN [LANGUAGE].
+        YOU MUST WRITE THE SCRIPT IN THE LANGUAGE SPECIFIED IN {self.language}.
         ONLY RETURN THE RAW CONTENT OF THE SCRIPT. DO NOT INCLUDE "VOICEOVER", "NARRATOR" OR SIMILAR INDICATORS OF WHAT SHOULD BE SPOKEN AT THE BEGINNING OF EACH PARAGRAPH OR LINE. YOU MUST NOT MENTION THE PROMPT, OR ANYTHING ABOUT THE SCRIPT ITSELF. ALSO, NEVER TALK ABOUT THE AMOUNT OF PARAGRAPHS OR LINES. JUST WRITE THE SCRIPT
         
         Subject: {self.subject}
