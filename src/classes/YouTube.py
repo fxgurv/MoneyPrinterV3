@@ -315,10 +315,8 @@ class YouTube:
         ok = False
         while ok == False:
             url = f"https://hercai.onrender.com/{get_image_model()}/text2image?prompt={prompt}"
-
             r = requests.get(url)
             parsed = r.json()
-
             if "url" not in parsed or not parsed.get("url"):
                 # Retry
                 if get_verbose():
@@ -327,23 +325,17 @@ class YouTube:
             else:
                 ok = True
                 image_url = parsed["url"]
-
                 if get_verbose():
                     info(f" => Generated Image: {image_url}")
-
                 image_path = os.path.join(ROOT_DIR, "tmp", str(uuid4()) + ".png")
 #                image_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".png")
-
-                
                 with open(image_path, "wb") as image_file:
                     # Write bytes to file
                     image_r = requests.get(image_url)
-
                     image_file.write(image_r.content)
 
                 if get_verbose():
                     info(f" => Wrote Image to \"{image_path}\"\n")
-
                 self.images.append(image_path)
                 
                 return image_path
@@ -351,21 +343,16 @@ class YouTube:
     def generate_script_to_speech(self, tts_instance: TTS) -> str:
         """
         Converts the generated script into Speech using CoquiTTS and returns the path to the wav file.
-
         Args:
             tts_instance (tts): Instance of TTS Class.
-
         Returns:
             path_to_wav (str): Path to generated audio (WAV Format).
         """
 #        path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".wav")
         path = os.path.join(ROOT_DIR, "tmp", str(uuid4()) + ".wav")
-
         # Clean script, remove every character that is not a word character, a space, a period, a question mark, or an exclamation mark.
         self.script = re.sub(r'[^\w\s.?!]', '', self.script)
-
         tts_instance.synthesize(self.script, path)
-
         self.tts_path = path
 
         if get_verbose():
@@ -426,102 +413,117 @@ class YouTube:
 
         return srt_path
 
-    def combine(self) -> str:
-        """
-        Combines everything into the final video.
+def combine(self) -> str:
+    """
+    Combines everything into the final video.
 
-        Returns:
-            path (str): The path to the generated MP4 File.
-        """
-#        combined_image_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".mp4")
-        combined_image_path = os.path.join(ROOT_DIR, "tmp", str(uuid4()) + ".mp4")
+    Returns:
+        path (str): The path to the generated MP4 File.
+    """
+    # combined_image_path = os.path.join(ROOT_DIR, ".mp", str(uuid4()) + ".mp4")
+    combined_image_path = os.path.join(ROOT_DIR, "tmp", str(uuid4()) + ".mp4")
 
-        threads = get_threads()
-        tts_clip = AudioFileClip(self.tts_path)
-        max_duration = tts_clip.duration
-        req_dur = max_duration / len(self.images)
+    threads = get_threads()
+    tts_clip = AudioFileClip(self.tts_path)
+    max_duration = tts_clip.duration
+    req_dur = max_duration / len(self.images)
 
-        # Make a generator that returns a TextClip when called with consecutive
-        generator = lambda txt: TextClip(
-            txt,
-            font=os.path.join(get_fonts_dir(), get_font()),
-            fontsize=100,
-            color="#FFFF00",
-            stroke_color="black",
-            stroke_width=5,
-            size=(1080, 1920),
-            method="caption",
+    generator = lambda txt: TextClip(
+        txt,
+        font=os.path.join(get_fonts_dir(), get_font()),
+        fontsize=100,
+        color="#FFFF00",
+        stroke_color="black",
+        stroke_width=5,
+        size=(1080, 1920),
+        method="caption",
+    )
+
+    info(colored("[+] Combining images...", "blue"))
+
+    clips = []
+    tot_dur = 0
+    while tot_dur < max_duration:
+        for image_path in self.images:
+            clip = ImageClip(image_path)
+            clip.duration = req_dur
+            clip = clip.set_fps(30)
+
+            if round((clip.w/clip.h), 4) < 0.5625:
+                if get_verbose():
+                    info(f" => Resizing Image: {image_path} to 1080x1920")
+                clip = crop(clip, width=clip.w, height=round(clip.w/0.5625), x_center=clip.w / 2, y_center=clip.h / 2)
+            else:
+                if get_verbose():
+                    info(f" => Resizing Image: {image_path} to 1920x1080")
+                clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, x_center=clip.w / 2, y_center=clip.h / 2)
+            clip = clip.resize((1080, 1920))
+
+            # Apply Zoom In Effect
+            clip = zoom_in_effect(clip)
+
+            clips.append(clip)
+            tot_dur += clip.duration
+
+    EFFECT_DURATION = 0.3
+    first_clip = CompositeVideoClip(
+        [
+            clips[0]
+            .set_pos("center")
+            .fx(slide_out, duration=EFFECT_DURATION, side="left")
+        ]
+    ).set_start((req_dur - EFFECT_DURATION) * 0)
+
+    last_clip = (
+        CompositeVideoClip(
+            [
+                clips[-1]
+                .set_pos("center")
+                .fx(slide_in, duration=EFFECT_DURATION, side="right")
+            ]
         )
+        .set_start((req_dur - EFFECT_DURATION) * (len(clips) - 1))
+        .fx(slide_out, duration=EFFECT_DURATION, side="left")
+    )
 
-        print(colored("[+] Combining images...", "blue"))
+    videos = (
+        [first_clip]
+        + [
+            (
+                CompositeVideoClip(
+                    [
+                        clip.set_pos("center").fx(
+                            slide_in, duration=EFFECT_DURATION, side="right"
+                        )
+                    ]
+                )
+                .set_start((req_dur - EFFECT_DURATION) * idx)
+                .fx(slide_out, duration=EFFECT_DURATION, side="left")
+            )
+            for idx, clip in enumerate(clips[1:-1], start=1)
+        ]
+        + [last_clip]
+    )
 
-        clips = []
-        tot_dur = 0
-        # Add downloaded clips over and over until the duration of the audio (max_duration) has been reached
-        while tot_dur < max_duration:
-            for image_path in self.images:
-                clip = ImageClip(image_path)
-                clip.duration = req_dur
-                clip = clip.set_fps(30)
+    final_clip = concatenate_videoclips(videos)
+    final_clip = final_clip.set_fps(30)
+    random_song = choose_random_song()
+    
+    subtitles_path = self.generate_subtitles(self.tts_path)
+    equalize_subtitles(subtitles_path, 10)
+    subtitles = SubtitlesClip(subtitles_path, generator)
+    subtitles.set_pos(("center", "center"))
+    random_song_clip = AudioFileClip(random_song).set_fps(44100)
+    random_song_clip = random_song_clip.fx(afx.volumex, 0.1)
+    comp_audio = CompositeAudioClip([tts_clip.set_fps(44100), random_song_clip])
+    final_clip = final_clip.set_audio(comp_audio)
+    final_clip = final_clip.set_duration(tts_clip.duration)
+    final_clip = CompositeVideoClip([final_clip, subtitles])
+    final_clip.write_videofile(combined_image_path, threads=threads)
 
-                # Not all images are same size,
-                # so we need to resize them
-                if round((clip.w/clip.h), 4) < 0.5625:
-                    if get_verbose():
-                        info(f" => Resizing Image: {image_path} to 1080x1920")
-                    clip = crop(clip, width=clip.w, height=round(clip.w/0.5625), \
-                                x_center=clip.w / 2, \
-                                y_center=clip.h / 2)
-                else:
-                    if get_verbose():
-                        info(f" => Resizing Image: {image_path} to 1920x1080")
-                    clip = crop(clip, width=round(0.5625*clip.h), height=clip.h, \
-                                x_center=clip.w / 2, \
-                                y_center=clip.h / 2)
-                clip = clip.resize((1080, 1920))
+    success(f"Wrote Video to \"{combined_image_path}\"")
 
-                # FX (Fade In)
-                #clip = clip.fadein(2)
-
-                clips.append(clip)
-                tot_dur += clip.duration
-
-        final_clip = concatenate_videoclips(clips)
-        final_clip = final_clip.set_fps(30)
-        random_song = choose_random_song()
-        
-        subtitles_path = self.generate_subtitles(self.tts_path)
-
-        # Equalize srt file
-        equalize_subtitles(subtitles_path, 10)
-        
-        # Burn the subtitles into the video
-        subtitles = SubtitlesClip(subtitles_path, generator)
-
-        subtitles.set_pos(("center", "center"))
-        random_song_clip = AudioFileClip(random_song).set_fps(44100)
-
-        # Turn down volume
-        random_song_clip = random_song_clip.fx(afx.volumex, 0.1)
-        comp_audio = CompositeAudioClip([
-            tts_clip.set_fps(44100),
-            random_song_clip
-        ])
-
-        final_clip = final_clip.set_audio(comp_audio)
-        final_clip = final_clip.set_duration(tts_clip.duration)
-
-        # Add subtitles
-        final_clip = CompositeVideoClip([
-            final_clip,
-            subtitles
-        ])
-
-        final_clip.write_videofile(combined_image_path, threads=threads)
-
-        success(f"Wrote Video to \"{combined_image_path}\"")
-
-        return combined_image_path
+    return combined_image_path
 
     def generate_video(self, tts_instance: TTS) -> str:
         """
