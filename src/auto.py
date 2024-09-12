@@ -165,5 +165,5 @@ if __name__ == "__main__":
         setup_youtube_accounts()
     assert_folder_structure()
     rem_temp_files()
-    fetch_music()
+    fetch_songs()
     process_accounts()
