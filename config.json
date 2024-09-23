@@ -1,11 +1,11 @@
 {
   "verbose": true,
-  "firefox_profile": "/data/Profile",
+  "firefox_profile": "/home/user/MoneyPrinterV3/content/firefox/profile",
   "headless": true,
   "twitter_language": "English",
-  "llm": "gpt35_turbo",
-  "image_prompt_llm": "gpt35_turbo",
-  "image_model": "shonin",
+  "llm": "claude_3_haiku",
+  "image_prompt_llm": "claude_3_haiku",
+  "image_model": "prodia",
   "threads": 8,
   "zip_url": "https://huggingface.co/AZILS/BG/resolve/main/BG.zip?download=true",
   "is_for_kids": false,
@@ -20,8 +20,12 @@
   "scraper_timeout": 300,
   "outreach_message_subject": "I have a question...",
   "outreach_message_body_file": "outreach_message.html",
-  "gemini_api_key": "AIzaSyC6N1MVe9WmAFjWMNuXjlaLnYa8eO813tY",
   "assembly_ai_api_key": "e9c253a938184370becdf77f2a9e6a45",
-  "font": "LuckeyGuy.ttf",
-  "imagemagick_path": "/usr/bin/convert"
+  "redis_uri": "redis://localhost:6379",
+  "user_data": "C:\\Users\\${user}\\AppData\\Local\\Google\\Chrome\\User Data",
+  "font": "bold_font.ttf",
+  "imagemagick_path": "/usr/bin/convert",
+  "tts_type": "elevenlabs",
+  "elevenlabs_api_key": "ec71cc5fb466bbbeaa935e5a7b001d25",
+  "elevenlabs_voice": "Rachel"
 }
