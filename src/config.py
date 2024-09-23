@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import srt_equalizer
+
 from termcolor import colored
 
 ROOT_DIR = os.path.dirname(sys.path[0])
@@ -14,25 +15,20 @@ def assert_folder_structure() -> None:
         None
     """
     # Create the .mp folder
-#    if not os.path.exists(os.path.join(ROOT_DIR, ".mp")):
-#        if get_verbose():
-#            print(colored(f"=> Creating .mp folder at {os.path.join(ROOT_DIR, '.mp')}", "green"))
-#        os.makedirs(os.path.join(ROOT_DIR, ".mp"))
-    if not os.path.exists(os.path.join(ROOT_DIR, "tmp")):
+    if not os.path.exists(os.path.join(ROOT_DIR, ".mp")):
         if get_verbose():
-            print(colored(f"=> Creating tmp folder at {os.path.join(ROOT_DIR, 'tmp')}", "green"))
-        os.makedirs(os.path.join(ROOT_DIR, "tmp"))
-
+            print(colored(f"=> Creating .mp folder at {os.path.join(ROOT_DIR, '.mp')}", "green"))
+        os.makedirs(os.path.join(ROOT_DIR, ".mp"))
 
 def get_first_time_running() -> bool:
     """
-    Checks if the program is running for the first time by checking if tmp folder exists.
+    Checks if the program is running for the first time by checking if .mp folder exists.
 
     Returns:
         exists (bool): True if the program is running for the first time, False otherwise
     """
-#    return not os.path.exists(os.path.join(ROOT_DIR, ".mp"))
-    return not os.path.exists(os.path.join(ROOT_DIR, "tmp"))
+    return not os.path.exists(os.path.join(ROOT_DIR, ".mp"))
+
 def get_email_credentials() -> dict:
     """
     Gets the email credentials from the config file.
@@ -192,15 +188,6 @@ def get_outreach_message_body_file() -> str:
     """
     with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
         return json.load(file)["outreach_message_body_file"]
-def get_gemini_api_key() -> str:
-    """
-    Gets the Google Gemini API key.
-
-    Returns:
-        key (str): The Gemini API key
-    """
-    with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
-        return json.load(file)["gemini_api_key"]
 
 def get_assemblyai_api_key() -> str:
     """
@@ -211,6 +198,14 @@ def get_assemblyai_api_key() -> str:
     """
     with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
         return json.load(file)["assembly_ai_api_key"]
+
+def get_redis_uri() -> str:
+    with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
+        return json.load(file)["redis_uri"]
+
+def get_user_data() -> str:
+    with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
+        return json.load(file)["user_data"]
     
 def equalize_subtitles(srt_path: str, max_chars: int = 10) -> None:
     """
@@ -253,3 +248,34 @@ def get_imagemagick_path() -> str:
     """
     with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
         return json.load(file)["imagemagick_path"]
+
+
+def get_tts_type() -> str:
+    """
+    Gets the TTS type from the config file.
+
+    Returns:
+        tts_type (str): The TTS type (elevenlabs or coqui_tts)
+    """
+    with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
+        return json.load(file).get("tts_type", "coqui_tts")
+
+def get_elevenlabs_api_key() -> str:
+    """
+    Gets the ElevenLabs API key from the config file.
+
+    Returns:
+        api_key (str): The ElevenLabs API key
+    """
+    with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
+        return json.load(file).get("elevenlabs_api_key", "")
+
+def get_elevenlabs_voice() -> str:
+    """
+    Gets the ElevenLabs voice from the config file.
+
+    Returns:
+        voice (str): The ElevenLabs voice
+    """
+    with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
+        return json.load(file).get("elevenlabs_voice", "Rachel")
