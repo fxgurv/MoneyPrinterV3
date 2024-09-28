@@ -1,11 +1,11 @@
 {
   "verbose": true,
-  "firefox_profile": "/home/user/MoneyPrinterV3/content/firefox/profile",
+  "firefox_profile": "/data/Profile",
   "headless": true,
   "twitter_language": "English",
   "llm": "claude_3_haiku",
   "image_prompt_llm": "claude_3_haiku",
-  "image_model": "prodia",
+  "image_model": "laxica",
   "threads": 8,
   "zip_url": "https://huggingface.co/AZILS/BG/resolve/main/BG.zip?download=true",
   "is_for_kids": false,
