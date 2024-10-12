@@ -260,15 +260,17 @@ def get_tts_type() -> str:
     with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
         return json.load(file).get("tts_type", "coqui_tts")
 
+
 def get_elevenlabs_api_key() -> str:
     """
-    Gets the ElevenLabs API key from the config file.
+    Gets the AssemblyAI API key.
 
     Returns:
-        api_key (str): The ElevenLabs API key
+        key (str): The AssemblyAI API key
     """
     with open(os.path.join(ROOT_DIR, "config.json"), "r") as file:
-        return json.load(file).get("elevenlabs_api_key", "")
+        return json.load(file)["elevenlabs_api_key"]
+
 
 def get_elevenlabs_voice() -> str:
     """
