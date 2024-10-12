@@ -371,7 +371,7 @@ if __name__ == "__main__":
     rem_temp_files()
 
     # Fetch MP3 Files
-    fetch_songs()
+    fetch_music()
 
     while True:
         main()
