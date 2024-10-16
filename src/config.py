@@ -14,20 +14,20 @@ def assert_folder_structure() -> None:
     Returns:
         None
     """
-    # Create the .mp folder
-    if not os.path.exists(os.path.join(ROOT_DIR, ".mp")):
+    # Create the tmp folder
+    if not os.path.exists(os.path.join(ROOT_DIR, "tmp")):
         if get_verbose():
-            print(colored(f"=> Creating .mp folder at {os.path.join(ROOT_DIR, '.mp')}", "green"))
-        os.makedirs(os.path.join(ROOT_DIR, ".mp"))
+            print(colored(f"=> Creating tmp folder at {os.path.join(ROOT_DIR, 'tmp')}", "green"))
+        os.makedirs(os.path.join(ROOT_DIR, "tmp"))
 
 def get_first_time_running() -> bool:
     """
-    Checks if the program is running for the first time by checking if .mp folder exists.
+    Checks if the program is running for the first time by checking if tmp folder exists.
 
     Returns:
         exists (bool): True if the program is running for the first time, False otherwise
     """
-    return not os.path.exists(os.path.join(ROOT_DIR, ".mp"))
+    return not os.path.exists(os.path.join(ROOT_DIR, "tmp"))
 
 def get_email_credentials() -> dict:
     """
