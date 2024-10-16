@@ -47,10 +47,10 @@ def rem_temp_files() -> None:
     Returns:
         None
     """
-    # Path to the `.mp` directory
+    # Path to the `tmp` directory
     tmp_dir = os.path.join(ROOT_DIR, "tmp")
     files = os.listdir(tmp_dir)    
-#    mp_dir = os.path.join(ROOT_DIR, ".mp")
+#    mp_dir = os.path.join(ROOT_DIR, "tmp")
 #    files = os.listdir(mp_dir)
     for file in files:
         if not file.endswith(".json"):
